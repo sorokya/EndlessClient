@@ -13,7 +13,7 @@ using EOLib.IO.Repositories;
 using EOLib.IO.Services;
 using Microsoft.Practices.Unity;
 
-namespace BatchMap
+namespace BatchMap.Old
 {
     public static class Program
     {

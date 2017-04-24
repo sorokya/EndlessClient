@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PacketDecoder.Properties {
+namespace BatchPub.Old.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
