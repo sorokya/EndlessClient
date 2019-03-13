@@ -41,6 +41,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EOLib.Localization.Test", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EOLib.Config.Test", "EOLib.Config.Test\EOLib.Config.Test.csproj", "{EF89926E-F8AA-4DB4-AA56-64F013EBF009}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EOLib.Net", "EOLib.Net\EOLib.Net.csproj", "{6B74D86D-D4C1-4905-B52A-87046A6E7101}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -177,6 +179,14 @@ Global
 		{EF89926E-F8AA-4DB4-AA56-64F013EBF009}.Linux - Release|x86.Build.0 = Linux - Release|x86
 		{EF89926E-F8AA-4DB4-AA56-64F013EBF009}.Release|x86.ActiveCfg = Release|x86
 		{EF89926E-F8AA-4DB4-AA56-64F013EBF009}.Release|x86.Build.0 = Release|x86
+		{6B74D86D-D4C1-4905-B52A-87046A6E7101}.Debug|x86.ActiveCfg = Debug|x86
+		{6B74D86D-D4C1-4905-B52A-87046A6E7101}.Debug|x86.Build.0 = Debug|x86
+		{6B74D86D-D4C1-4905-B52A-87046A6E7101}.Linux - Debug|x86.ActiveCfg = Debug|x86
+		{6B74D86D-D4C1-4905-B52A-87046A6E7101}.Linux - Debug|x86.Build.0 = Debug|x86
+		{6B74D86D-D4C1-4905-B52A-87046A6E7101}.Linux - Release|x86.ActiveCfg = Release|x86
+		{6B74D86D-D4C1-4905-B52A-87046A6E7101}.Linux - Release|x86.Build.0 = Release|x86
+		{6B74D86D-D4C1-4905-B52A-87046A6E7101}.Release|x86.ActiveCfg = Release|x86
+		{6B74D86D-D4C1-4905-B52A-87046A6E7101}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -197,6 +207,7 @@ Global
 		{22820580-B33F-4AA9-8044-A6EC4797AE21} = {F4037DFB-F795-4436-89A6-0B1C34E33A9D}
 		{4D1AE8B6-7A61-4B74-B8F7-36AA04974E7A} = {F82F4564-465B-45C3-BA7E-0A6C1CB63E39}
 		{EF89926E-F8AA-4DB4-AA56-64F013EBF009} = {F82F4564-465B-45C3-BA7E-0A6C1CB63E39}
+		{6B74D86D-D4C1-4905-B52A-87046A6E7101} = {F4037DFB-F795-4436-89A6-0B1C34E33A9D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D50998F9-AE96-4424-871E-24DC3725615D}
