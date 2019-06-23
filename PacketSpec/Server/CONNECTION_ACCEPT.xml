@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<packet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="file:///D:/git/personal/NetworkEngine/packet_schema.xsd">
+    <short>sendMulti</short>
+    <short>recvMulti</short>
+    <short>clientId</short>
+</packet>

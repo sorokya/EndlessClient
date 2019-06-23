@@ -1,0 +1,93 @@
+byte
+char
+short
+three
+int
+string
+skip
+endString
+  length (optional): specify length of string or number of elements to consume (creates array)
+
+structure name=
+
+# A group of elements that terminates when the packet ends
+group countType= breakOn= breakType= peek=
+  countType (optional): data type for element count, if present
+                        that many elements will be consumed
+  breakOn (optional): value to test for, if present (reads to end if excluded)
+  breakType (optional): type of test value (requires breakOn)
+  peek (optional): true to peek at the test value, false to consume it
+
+preloop # elements before the loop but after the count
+
+postloop # elements after the loop but not part of a structure
+
+condition type= peek=
+  case value=
+    data
+
+
+# characters
+group countType=char breakOn=255 breakType=byte peek=false
+  structure name=character
+  postloop
+    byte
+
+# npcs
+group breakOn=255 breakType=byte peek=true
+  structure name=npc
+  postloop
+    byte
+
+# map items
+group
+  structure name=item
+
+# inventory items
+group breakOn=255 breakType=byte peek=true
+ structure name=item
+ postloop
+   byte
+
+# inventory spells
+group breakOn=255 breakType=byte peek=true
+ structure name=spell
+ postloop
+   byte
+
+# show account's characters
+group countType=char breakOn=255 breakType=255 peek=false
+ preloop
+   byte
+ structure name=charrr
+ postloop
+   byte
+
+PacketCompiler /SourceFiles ./PacketSpec/Client/*.xml /Dest ./EOLib.Net/PacketSpec
+
+interface IPacketTranslator<out T> where T : IDomainPacket, class, new()
+{
+  PacketFamily Family {get;}
+  PacketAction Action {get;}
+
+  T Translate(IPacket sourcePacket);
+}
+
+// class generated from PacketCompiler
+class InitInitPacketTranslator : IPacketTranslator<InitInitData>
+{
+  PacketFamily Family => Init;
+  PacketAction Action => Init;
+
+  InitInitData Translate(IPacket sourcePacket)
+}
+
+// class generated from PacketCompiler
+class InitInitData : IDomainPacket
+{
+  public InitInitData()
+  {
+  }
+
+  // properties...
+}

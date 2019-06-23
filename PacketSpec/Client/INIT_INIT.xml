@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<packet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="file:///D:/git/personal/NetworkEngine/packet_schema.xsd">
+    <condition>
+        <byte>response</byte>
+        <case value="1">
+            <skip length="2"/>
+            <char>requiredVersion</char>
+        </case>
+        <case value="2">
+            <byte>seq1</byte>
+            <byte>seq2</byte>
+            <byte>recvMulti</byte>
+            <byte>sendMulti</byte>
+            <short>clientId</short>
+            <three>hashResponse</three>
+        </case>
+        <case value="3">
+            <condition>
+                <byte>banType</byte>
+                <case value="0">
+                    <byte>banTimeRemaining</byte>
+                </case>
+            </condition>
+        </case>
+    </condition>
+</packet>

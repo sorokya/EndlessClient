@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<packet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="file:///D:/git/personal/NetworkEngine/schema/NetworkPacket.xsd">
+    <three>stupidHash</three>
+    <char>majorVersion</char>
+    <char>minorVersion</char>
+    <char>buildVersion</char>
+    <char>byte112</char>
+    <char>hdSerialNumberLength</char>
+    <string>hdSerialNumber</string>
+</packet>
