@@ -362,8 +362,12 @@ namespace EndlessClient.Rendering.Character
             if (_gameStateProvider.CurrentState != GameStates.PlayingTheGame)
                 return false;
 
-            return _currentMapProvider.CurrentMap.Tiles[renderProps.MapY, renderProps.MapX] == TileSpec.Jump ||
-                (renderProps.IsActing(CharacterActionState.Walking) && _currentMapProvider.CurrentMap.Tiles[renderProps.GetDestinationY(), renderProps.GetDestinationX()] == TileSpec.Jump);
+            var map = _currentMapProvider.CurrentMap;
+
+            return map.Properties.IsInBounds(renderProps.MapPosition) && map.Tiles[renderProps.MapY, renderProps.MapX] == TileSpec.Jump ||
+                (map.Properties.IsInBounds(renderProps.GetDestination()) &&
+                 renderProps.IsActing(CharacterActionState.Walking) &&
+                 map.Tiles[renderProps.GetDestinationY(), renderProps.GetDestinationX()] == TileSpec.Jump);
         }
 
         private int GetSteppingStoneOffset(ICharacterRenderProperties renderProps)

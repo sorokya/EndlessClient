@@ -196,7 +196,13 @@ namespace EndlessClient.Rendering.Character
             }
             else if (action == CharacterActionState.Walking)
             {
-                if (_currentMapProvider.CurrentMap.Tiles[rp.GetDestinationY(), rp.GetDestinationX()] == TileSpec.Water)
+                var destX = rp.GetDestinationX();
+                var destY = rp.GetDestinationY();
+                var mapWidth = _currentMapProvider.CurrentMap.Properties.Width;
+                var mapHeight = _currentMapProvider.CurrentMap.Properties.Height;
+
+                var isInBounds = destX >= 0 && destX <= mapWidth && destY >= 0 && destY <= mapHeight;
+                if (isInBounds && _currentMapProvider.CurrentMap.Tiles[rp.GetDestinationY(), rp.GetDestinationX()] == TileSpec.Water)
                     characterRenderer.ShowWaterSplashies();
             }
         }

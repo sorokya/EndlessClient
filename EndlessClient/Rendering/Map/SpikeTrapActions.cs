@@ -22,6 +22,7 @@ namespace EndlessClient.Rendering.Map
         public void ShowSpikeTrap(MapCoordinate coordinate)
         {
             if (!_currentMapStateRepository.VisibleSpikeTraps.Contains(coordinate) &&
+                _currentMapProvider.CurrentMap.Properties.IsInBounds(coordinate) &&
                 _currentMapProvider.CurrentMap.Tiles[coordinate.Y, coordinate.X] == TileSpec.SpikesTrap)
             {
                 _currentMapStateRepository.VisibleSpikeTraps.Add(coordinate);

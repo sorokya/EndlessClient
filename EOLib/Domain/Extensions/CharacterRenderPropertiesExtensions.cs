@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using EOLib.Domain.Character;
+using EOLib.Domain.Map;
 
 namespace EOLib.Domain.Extensions
 {
@@ -25,6 +26,11 @@ namespace EOLib.Domain.Extensions
         {
             var offset = GetYOffset(renderProperties.Direction);
             return renderProperties.MapY + offset;
+        }
+
+        public static MapCoordinate GetDestination(this ICharacterRenderProperties renderProperties)
+        {
+            return new MapCoordinate(GetDestinationX(renderProperties), GetDestinationY(renderProperties));
         }
 
         private static int GetXOffset(EODirection direction)

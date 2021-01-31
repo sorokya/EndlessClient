@@ -1,4 +1,5 @@
-﻿using EOLib.Net.API;
+﻿using EOLib.Domain.Map;
+using EOLib.Net.API;
 
 namespace EOLib.Domain.Character
 {
@@ -25,6 +26,7 @@ namespace EOLib.Domain.Character
         public EODirection Direction { get; private set; }
         public int MapX { get; private set; }
         public int MapY { get; private set; }
+        public MapCoordinate MapPosition => new MapCoordinate(MapX, MapY);
 
         public int ActualWalkFrame { get; private set; }
         public int RenderWalkFrame { get; private set; }

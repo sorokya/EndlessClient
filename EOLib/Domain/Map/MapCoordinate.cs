@@ -2,6 +2,8 @@
 {
     public struct MapCoordinate
     {
+        public static MapCoordinate Zero { get; } = new MapCoordinate(0, 0);
+
         public int X { get; }
 
         public int Y { get; }
@@ -25,6 +27,16 @@
         public static bool operator !=(MapCoordinate left, MapCoordinate right)
         {
             return !(left == right);
+        }
+
+        public static bool operator >=(MapCoordinate left, MapCoordinate right)
+        {
+            return left.X >= right.X && left.Y >= right.Y;
+        }
+
+        public static bool operator <=(MapCoordinate left, MapCoordinate right)
+        {
+            return left.X <= right.X && left.Y <= right.Y;
         }
 
         public override string ToString() => $"{X}, {Y}";
