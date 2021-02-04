@@ -19,6 +19,7 @@ namespace EndlessClient.GameExecution
     public class EndlessGame : Game, IEndlessGame
     {
         private readonly IGraphicsDeviceRepository _graphicsDeviceRepository;
+        private readonly IGameWindowRepository _gameWindowRepository;
         private readonly IControlSetRepository _controlSetRepository;
         private readonly IControlSetFactory _controlSetFactory;
         private readonly ITestModeLauncher _testModeLauncher;
@@ -26,12 +27,13 @@ namespace EndlessClient.GameExecution
         private readonly ILoggerProvider _loggerProvider;
         private readonly IChatBubbleTextureProvider _chatBubbleTextureProvider;
         private readonly IShaderRepository _shaderRepository;
-        private readonly IGraphicsDeviceManager _graphicsDeviceManager;
+        private readonly GraphicsDeviceManager _graphicsDeviceManager;
 
         private KeyboardState _previousKeyState;
 
         public EndlessGame(IClientWindowSizeProvider windowSizeProvider,
                            IGraphicsDeviceRepository graphicsDeviceRepository,
+                           IGameWindowRepository gameWindowRepository,
                            IControlSetRepository controlSetRepository,
                            IControlSetFactory controlSetFactory,
                            ITestModeLauncher testModeLauncher,
@@ -41,6 +43,7 @@ namespace EndlessClient.GameExecution
                            IShaderRepository shaderRepository)
         {
             _graphicsDeviceRepository = graphicsDeviceRepository;
+            _gameWindowRepository = gameWindowRepository;
             _controlSetRepository = controlSetRepository;
             _controlSetFactory = controlSetFactory;
             _testModeLauncher = testModeLauncher;
@@ -50,8 +53,8 @@ namespace EndlessClient.GameExecution
             _shaderRepository = shaderRepository;
             _graphicsDeviceManager = new GraphicsDeviceManager(this)
             {
-                PreferredBackBufferWidth = windowSizeProvider.Width,
-                PreferredBackBufferHeight = windowSizeProvider.Height
+                PreferredBackBufferWidth = ClientWindowSizeRepository.DEFAULT_BACKBUFFER_WIDTH,
+                PreferredBackBufferHeight = ClientWindowSizeRepository.DEFAULT_BACKBUFFER_HEIGHT
             };
 
             Content.RootDirectory = "Content";
@@ -74,9 +77,11 @@ namespace EndlessClient.GameExecution
             //todo: all the things that should load stuff as part of game's load/initialize should be broken into a pattern
             _chatBubbleTextureProvider.LoadContent();
 
-            //the GraphicsDevice doesn't exist until Initialize() is called by the framework
+            //the GraphicsDevice/Window don't exist until Initialize() is called by the framework
             //Ideally, this would be set in a DependencyContainer, but I'm not sure of a way to do that now
             _graphicsDeviceRepository.GraphicsDevice = GraphicsDevice;
+            _graphicsDeviceRepository.GraphicsDeviceManager = _graphicsDeviceManager;
+            _gameWindowRepository.Window = Window;
 
 #if LINUX
             _shaderRepository.Shaders[ShaderRepository.HairClip] = Content.Load<Effect>(ShaderRepository.HairClip);

@@ -82,6 +82,8 @@
     <Compile Include="Dialogs\BaseEODialog.cs" />
     <Compile Include="Dialogs\EODialogButton.cs" />
     <Compile Include="Dialogs\Services\EODialogButtonService.cs" />
+    <Compile Include="Rendering\DispatcherGameComponent.cs" />
+    <Compile Include="Rendering\IGameWindowRepository.cs" />
     <Compile Include="HUD\AStarPathFinder.cs" />
     <Compile Include="HUD\Chat\ChatModeCalculator.cs" />
     <Compile Include="HUD\Chat\ChatNotificationActions.cs" />
@@ -186,7 +188,7 @@
     <Compile Include="HUD\Panels\SettingsPanel.cs" />
     <Compile Include="HUD\Panels\StatsPanel.cs" />
     <Compile Include="HUD\StatusLabelSetter.cs" />
-    <Compile Include="Rendering\ClientWindowSizeProvider.cs" />
+    <Compile Include="Rendering\ClientWindowSizeRepository.cs" />
     <Compile Include="Network\PacketHandlerGameComponent.cs" />
     <Compile Include="Rendering\PointComparer.cs" />
     <Compile Include="Rendering\CharacterProperties\ICharacterPropertyRendererBuilder.cs" />
@@ -458,11 +460,11 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\MonoGame.Framework.DesktopGL.3.7.1.189\build\MonoGame.Framework.DesktopGL.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MonoGame.Framework.DesktopGL.3.7.1.189\build\MonoGame.Framework.DesktopGL.targets'))" />
     <Error Condition="!Exists('..\packages\MonoGame.Content.Builder.3.7.0.9\build\MonoGame.Content.Builder.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MonoGame.Content.Builder.3.7.0.9\build\MonoGame.Content.Builder.targets'))" />
-    <Error Condition="!Exists('..\packages\EndlessClient.Binaries.1.1.0.6\build\net462\EndlessClient.Binaries.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EndlessClient.Binaries.1.1.0.6\build\net462\EndlessClient.Binaries.targets'))" />
+    <Error Condition="!Exists('..\packages\EndlessClient.Binaries.1.2.0.2\build\net462\EndlessClient.Binaries.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EndlessClient.Binaries.1.2.0.2\build\net462\EndlessClient.Binaries.targets'))" />
   </Target>
   <Import Project="..\packages\MonoGame.Framework.DesktopGL.3.7.1.189\build\MonoGame.Framework.DesktopGL.targets" Condition="Exists('..\packages\MonoGame.Framework.DesktopGL.3.7.1.189\build\MonoGame.Framework.DesktopGL.targets')" />
   <Import Project="..\packages\MonoGame.Content.Builder.3.7.0.9\build\MonoGame.Content.Builder.targets" Condition="Exists('..\packages\MonoGame.Content.Builder.3.7.0.9\build\MonoGame.Content.Builder.targets')" />
-  <Import Project="..\packages\EndlessClient.Binaries.1.1.0.6\build\net462\EndlessClient.Binaries.targets" Condition="Exists('..\packages\EndlessClient.Binaries.1.1.0.6\build\net462\EndlessClient.Binaries.targets')" />
+  <Import Project="..\packages\EndlessClient.Binaries.1.2.0.2\build\net462\EndlessClient.Binaries.targets" Condition="Exists('..\packages\EndlessClient.Binaries.1.2.0.2\build\net462\EndlessClient.Binaries.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

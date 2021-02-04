@@ -4,6 +4,7 @@ using System.Linq;
 using AutomaticTypeMapper;
 using EndlessClient.ControlSets;
 using EndlessClient.Network;
+using EndlessClient.Rendering;
 using Microsoft.Xna.Framework;
 
 namespace EndlessClient.GameExecution
@@ -69,7 +70,7 @@ namespace EndlessClient.GameExecution
         {
             var componentsToRemove = FindUnusedComponents(currentSet, nextSet);
             var disposableComponents = componentsToRemove
-                .Where(x => !(x is PacketHandlerGameComponent))
+                .Where(x => !(x is PacketHandlerGameComponent) && !(x is DispatcherGameComponent))
                 .OfType<IDisposable>()
                 .ToList();
 

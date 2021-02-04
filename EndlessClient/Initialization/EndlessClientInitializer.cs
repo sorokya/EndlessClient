@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using AutomaticTypeMapper;
 using EndlessClient.Content;
 using EndlessClient.Controllers;
@@ -20,7 +21,7 @@ namespace EndlessClient.Initialization
         private readonly IEndlessGameRepository _endlessGameRepository;
         private readonly IContentManagerRepository _contentManagerRepository;
         private readonly IKeyboardDispatcherRepository _keyboardDispatcherRepository;
-        private readonly PacketHandlerGameComponent _packetHandlerGameComponent;
+        private readonly List<IGameComponent> _persistentComponents;
 
         private readonly IMainButtonController _mainButtonController;
         private readonly IAccountController _accountController;
@@ -35,8 +36,7 @@ namespace EndlessClient.Initialization
                                         IEndlessGameRepository endlessGameRepository,
                                         IContentManagerRepository contentManagerRepository,
                                         IKeyboardDispatcherRepository keyboardDispatcherRepository,
-                                        PacketHandlerGameComponent packetHandlerGameComponent,
-
+                                        List<IGameComponent> persistentComponents,
                                         //Todo: refactor method injection to something like IEnumerable<IMethodInjectable>
                                         IMainButtonController mainButtonController,
                                         IAccountController accountController,
@@ -51,7 +51,7 @@ namespace EndlessClient.Initialization
             _endlessGameRepository = endlessGameRepository;
             _contentManagerRepository = contentManagerRepository;
             _keyboardDispatcherRepository = keyboardDispatcherRepository;
-            _packetHandlerGameComponent = packetHandlerGameComponent;
+            _persistentComponents = persistentComponents;
             _mainButtonController = mainButtonController;
             _accountController = accountController;
             _loginController = loginController;
@@ -66,7 +66,9 @@ namespace EndlessClient.Initialization
         {
             GameRepository.SetGame(_game as Game);
 
-            _game.Components.Add(_packetHandlerGameComponent);
+            foreach (var component in _persistentComponents)
+                _game.Components.Add(component);
+
             _endlessGameRepository.Game = _game;
 
             _contentManagerRepository.Content = _game.Content;

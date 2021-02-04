@@ -30,6 +30,9 @@ namespace EOLib.Config
         bool LogChatToFile { get; set; }
 
         bool EnableLog { get; set; }
+
+        int InGameWidth { get; set; }
+        int InGameHeight { get; set; }
     }
 
     public interface IConfigurationProvider
@@ -60,6 +63,9 @@ namespace EOLib.Config
         bool LogChatToFile { get; }
 
         bool EnableLog { get; }
+
+        int InGameWidth { get; }
+        int InGameHeight { get; }
     }
 
     [MappedType(BaseType = typeof(IConfigurationRepository), IsSingleton = true)]
@@ -92,5 +98,8 @@ namespace EOLib.Config
         public bool LogChatToFile { get; set; }
 
         public bool EnableLog { get; set; }
+
+        public int InGameWidth { get; set; }
+        public int InGameHeight { get; set; }
     }
 }
