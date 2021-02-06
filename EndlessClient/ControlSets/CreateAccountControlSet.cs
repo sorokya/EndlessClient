@@ -3,6 +3,7 @@ using System.Linq;
 using EndlessClient.Controllers;
 using EndlessClient.GameExecution;
 using EndlessClient.Input;
+using EndlessClient.Rendering;
 using EOLib;
 using EOLib.Domain.Account;
 using EOLib.Graphics;
@@ -35,8 +36,9 @@ namespace EndlessClient.ControlSets
 
         public CreateAccountControlSet(KeyboardDispatcher dispatcher,
                                        IMainButtonController mainButtonController,
+                                       IClientWindowSizeRepository clientWindowSizeRepository,
                                        IAccountController accountController)
-            : base(dispatcher, mainButtonController)
+            : base(dispatcher, mainButtonController, clientWindowSizeRepository)
         {
             _accountController = accountController;
         }

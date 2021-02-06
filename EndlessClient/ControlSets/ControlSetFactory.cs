@@ -6,6 +6,7 @@ using EndlessClient.Dialogs.Factories;
 using EndlessClient.GameExecution;
 using EndlessClient.HUD.Controls;
 using EndlessClient.Input;
+using EndlessClient.Rendering;
 using EndlessClient.UIControls;
 using EOLib.Config;
 using EOLib.Graphics;
@@ -22,6 +23,7 @@ namespace EndlessClient.ControlSets
         private readonly IKeyboardDispatcherProvider _keyboardDispatcherProvider;
         private readonly IConfigurationProvider _configProvider;
         private readonly ICharacterInfoPanelFactory _characterInfoPanelFactory;
+        private readonly IClientWindowSizeRepository _clientWindowSizeRepository;
         private IMainButtonController _mainButtonController;
         private IAccountController _accountController;
         private ILoginController _loginController;
@@ -33,7 +35,8 @@ namespace EndlessClient.ControlSets
                                  IContentManagerProvider contentManagerProvider,
                                  IKeyboardDispatcherProvider keyboardDispatcherProvider,
                                  IConfigurationProvider configProvider,
-                                 ICharacterInfoPanelFactory characterInfoPanelFactory)
+                                 ICharacterInfoPanelFactory characterInfoPanelFactory,
+                                 IClientWindowSizeRepository clientWindowSizeRepository)
         {
             _nativeGraphicsManager = nativeGraphicsManager;
             _messageBoxFactory = messageBoxFactory;
@@ -42,6 +45,7 @@ namespace EndlessClient.ControlSets
             _keyboardDispatcherProvider = keyboardDispatcherProvider;
             _configProvider = configProvider;
             _characterInfoPanelFactory = characterInfoPanelFactory;
+            _clientWindowSizeRepository = clientWindowSizeRepository;
         }
 
         public IControlSet CreateControlsForState(GameStates newState, IControlSet currentControlSet)
@@ -76,6 +80,7 @@ namespace EndlessClient.ControlSets
                     return new CreateAccountControlSet(
                         _keyboardDispatcherProvider.Dispatcher,
                         _mainButtonController,
+                        _clientWindowSizeRepository,
                         _accountController);
                 case GameStates.Login:
                     return new LoginPromptControlSet(
@@ -88,11 +93,16 @@ namespace EndlessClient.ControlSets
                     return new LoggedInControlSet(
                         _keyboardDispatcherProvider.Dispatcher,
                         _mainButtonController,
+                        _clientWindowSizeRepository,
                         _characterInfoPanelFactory,
                         _characterManagementController,
                         _accountController);
                 case GameStates.PlayingTheGame:
-                    return new InGameControlSet(_mainButtonController, _messageBoxFactory, _hudControlsFactory);
+                    return new InGameControlSet(
+                        _mainButtonController,
+                        _clientWindowSizeRepository,
+                        _messageBoxFactory,
+                        _hudControlsFactory);
                 default: throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
             }
         }

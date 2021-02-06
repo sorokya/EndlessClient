@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using EndlessClient.Controllers;
 using EndlessClient.GameExecution;
+using EndlessClient.Rendering;
 using EndlessClient.UIControls;
 using Microsoft.Xna.Framework;
 using XNAControls;
@@ -24,10 +25,11 @@ namespace EndlessClient.ControlSets
 
         public LoggedInControlSet(KeyboardDispatcher dispatcher,
                                   IMainButtonController mainButtonController,
+                                  IClientWindowSizeRepository clientWindowSizeRepository,
                                   ICharacterInfoPanelFactory characterInfoPanelFactory,
                                   ICharacterManagementController characterManagementController,
                                   IAccountController accountController)
-            : base(dispatcher, mainButtonController)
+            : base(dispatcher, mainButtonController, clientWindowSizeRepository)
         {
             _characterInfoPanelFactory = characterInfoPanelFactory;
             _characterManagementController = characterManagementController;
