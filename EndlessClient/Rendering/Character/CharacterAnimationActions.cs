@@ -88,6 +88,7 @@ namespace EndlessClient.Rendering.Character
                 return;
 
             Animator.StartOtherCharacterWalkAnimation(characterID);
+            if (_characterRendererProvider.CharacterRenderers.ContainsKey(characterID))
             ShowWaterSplashiesIfNeeded(CharacterActionState.Walking,
                                        _currentMapStateProvider.Characters.Single(x => x.ID == characterID),
                                        _characterRendererProvider.CharacterRenderers[characterID]);
@@ -102,7 +103,8 @@ namespace EndlessClient.Rendering.Character
                 return;
 
             Animator.StartOtherCharacterAttackAnimation(characterID);
-            ShowWaterSplashiesIfNeeded(CharacterActionState.Attacking,
+            if (_characterRendererProvider.CharacterRenderers.ContainsKey(characterID))
+                ShowWaterSplashiesIfNeeded(CharacterActionState.Attacking,
                                        _currentMapStateProvider.Characters.Single(x => x.ID == characterID),
                                        _characterRendererProvider.CharacterRenderers[characterID]);
         }

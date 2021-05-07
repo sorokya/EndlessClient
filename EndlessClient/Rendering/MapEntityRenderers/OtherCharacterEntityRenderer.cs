@@ -19,8 +19,9 @@ namespace EndlessClient.Rendering.MapEntityRenderers
                                             ICharacterRendererProvider characterRendererProvider,
                                             IChatBubbleProvider chatBubbleProvider,
                                             ICharacterStateCache characterStateCache,
-                                            IRenderOffsetCalculator renderOffsetCalculator)
-            : base(characterProvider, renderOffsetCalculator)
+                                            IRenderOffsetCalculator renderOffsetCalculator,
+                                            IClientWindowSizeProvider clientWindowSizeProvider)
+            : base(characterProvider, renderOffsetCalculator, clientWindowSizeProvider)
         {
             _characterRendererProvider = characterRendererProvider;
             _chatBubbleProvider = chatBubbleProvider;

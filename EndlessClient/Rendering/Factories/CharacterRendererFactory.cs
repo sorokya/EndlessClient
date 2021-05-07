@@ -24,6 +24,7 @@ namespace EndlessClient.Rendering.Factories
         private readonly ICharacterSpriteCalculator _characterSpriteCalculator;
         private readonly IGameStateProvider _gameStateProvider;
         private readonly ICurrentMapProvider _currentMapProvider;
+        private readonly IClientWindowSizeRepository _clientWindowSizeRepository;
 
         public CharacterRendererFactory(INativeGraphicsManager nativeGraphicsManager,
                                         IEndlessGameProvider gameProvider,
@@ -35,7 +36,8 @@ namespace EndlessClient.Rendering.Factories
                                         ICharacterTextures characterTextures,
                                         ICharacterSpriteCalculator characterSpriteCalculator,
                                         IGameStateProvider gameStateProvider,
-                                        ICurrentMapProvider currentMapProvider)
+                                        ICurrentMapProvider currentMapProvider,
+                                        IClientWindowSizeRepository clientWindowSizeRepository)
         {
             _nativeGraphicsManager = nativeGraphicsManager;
             _gameProvider = gameProvider;
@@ -48,6 +50,7 @@ namespace EndlessClient.Rendering.Factories
             _characterSpriteCalculator = characterSpriteCalculator;
             _gameStateProvider = gameStateProvider;
             _currentMapProvider = currentMapProvider;
+            _clientWindowSizeRepository = clientWindowSizeRepository;
         }
 
         public ICharacterRenderer CreateCharacterRenderer(ICharacter character)
@@ -64,7 +67,8 @@ namespace EndlessClient.Rendering.Factories
                 _characterSpriteCalculator,
                 character,
                 _gameStateProvider,
-                _currentMapProvider);
+                _currentMapProvider,
+                _clientWindowSizeRepository);
         }
     }
 }

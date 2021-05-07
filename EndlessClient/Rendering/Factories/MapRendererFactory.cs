@@ -24,6 +24,7 @@ namespace EndlessClient.Rendering.Factories
         private readonly IConfigurationProvider _configurationProvider;
         private readonly IMouseCursorRendererFactory _mouseCursorRendererFactory;
         private readonly IRenderOffsetCalculator _renderOffsetCalculator;
+        private readonly IClientWindowSizeRepository _clientWindowSizeRepository;
         private readonly INPCRendererUpdater _npcRendererUpdater;
         private readonly IDynamicMapObjectUpdater _dynamicMapObjectUpdater;
         private readonly IChatBubbleUpdater _chatBubbleUpdater;
@@ -40,7 +41,8 @@ namespace EndlessClient.Rendering.Factories
             IChatBubbleUpdater chatBubbleUpdater,
             IConfigurationProvider configurationProvider,
             IMouseCursorRendererFactory mouseCursorRendererFactory,
-            IRenderOffsetCalculator renderOffsetCalculator)
+            IRenderOffsetCalculator renderOffsetCalculator,
+            IClientWindowSizeRepository clientWindowSizeRepository)
         {
             _endlessGameProvider = endlessGameProvider;
             _renderTargetFactory = renderTargetFactory;
@@ -55,6 +57,7 @@ namespace EndlessClient.Rendering.Factories
             _configurationProvider = configurationProvider;
             _mouseCursorRendererFactory = mouseCursorRendererFactory;
             _renderOffsetCalculator = renderOffsetCalculator;
+            _clientWindowSizeRepository = clientWindowSizeRepository;
         }
 
         public IMapRenderer CreateMapRenderer()
@@ -71,7 +74,8 @@ namespace EndlessClient.Rendering.Factories
                                    _chatBubbleUpdater,
                                    _configurationProvider,
                                    _mouseCursorRendererFactory.Create(),
-                                   _renderOffsetCalculator);
+                                   _renderOffsetCalculator,
+                                   _clientWindowSizeRepository);
         }
     }
 }

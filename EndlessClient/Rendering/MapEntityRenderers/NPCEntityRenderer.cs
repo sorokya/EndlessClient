@@ -16,9 +16,10 @@ namespace EndlessClient.Rendering.MapEntityRenderers
 
         public NPCEntityRenderer(ICharacterProvider characterProvider,
                                  IRenderOffsetCalculator renderOffsetCalculator,
+                                 IClientWindowSizeProvider clientWindowSizeProvider,
                                  INPCRendererProvider npcRendererProvider,
                                  IChatBubbleProvider chatBubbleProvider)
-            : base(characterProvider, renderOffsetCalculator)
+            : base(characterProvider, renderOffsetCalculator, clientWindowSizeProvider)
         {
             _npcRendererProvider = npcRendererProvider;
             _chatBubbleProvider = chatBubbleProvider;

@@ -45,6 +45,8 @@ namespace EndlessClient.Rendering
         private readonly ICurrentMapProvider _currentMapProvider;
         private readonly IMapInteractionController _mapInteractionController;
         private readonly IUserInputProvider _userInputProvider;
+        private readonly IClientWindowSizeProvider _clientWindowSizeProvider;
+
         private readonly XNALabel _mapItemText;
 
         private Rectangle _drawArea;
@@ -65,7 +67,8 @@ namespace EndlessClient.Rendering
                                    IEIFFileProvider eifFileProvider,
                                    ICurrentMapProvider currentMapProvider,
                                    IMapInteractionController mapInteractionController,
-                                   IUserInputProvider userInputProvider)
+                                   IUserInputProvider userInputProvider,
+                                   IClientWindowSizeProvider clientWindowSizeProvider)
         {
             _mouseCursorTexture = nativeGraphicsManager.TextureFromResource(GFXTypes.PostLoginUI, 24, true);
             _characterProvider = characterProvider;
@@ -76,7 +79,7 @@ namespace EndlessClient.Rendering
             _currentMapProvider = currentMapProvider;
             _mapInteractionController = mapInteractionController;
             _userInputProvider = userInputProvider;
-
+            _clientWindowSizeProvider = clientWindowSizeProvider;
             SingleCursorFrameArea = new Rectangle(0, 0,
                                                   _mouseCursorTexture.Width/(int) CursorIndex.NumberOfFramesInSheet,
                                                   _mouseCursorTexture.Height);
@@ -134,8 +137,11 @@ namespace EndlessClient.Rendering
             var msX = mouseState.X - SingleCursorFrameArea.Width / 2;
             var msY = mouseState.Y - SingleCursorFrameArea.Height / 2;
 
-            _gridX = (int)Math.Round((msX + 2 * msY - 576 + offsetX + 2 * offsetY) / 64.0);
-            _gridY = (int)Math.Round((msY - _gridX * 16 - 144 + offsetY) / 16.0);
+            var widthFactor = _clientWindowSizeProvider.Width * 9 / 10; // 288 = 640 * .45, 576 = 640 * .9
+            var heightFactor = _clientWindowSizeProvider.Height * 3 / 10;
+
+            _gridX = (int)Math.Round((msX + 2 * msY - widthFactor + offsetX + 2 * offsetY) / 64.0);
+            _gridY = (int)Math.Round((msY - _gridX * 16 - heightFactor + offsetY) / 16.0);
         }
 
         private void UpdateDrawPostionBasedOnGridPosition(int offsetX, int offsetY)
@@ -189,10 +195,12 @@ namespace EndlessClient.Rendering
             return _renderOffsetCalculator.CalculateOffsetY(_characterProvider.MainCharacter.RenderProperties);
         }
 
-        //todo: this same logic is in a base map entity renderer. Maybe extract a service out.
-        private static Vector2 GetDrawCoordinatesFromGridUnits(int x, int y, int cOffX, int cOffY)
+        private Vector2 GetDrawCoordinatesFromGridUnits(int x, int y, int cOffX, int cOffY)
         {
-            return new Vector2(x*32 - y*32 + 288 - cOffX, y*16 + x*16 + 144 - cOffY);
+            var widthFactor = _clientWindowSizeProvider.Width * 45 / 100;
+            var heightFactor = _clientWindowSizeProvider.Height * 3 / 10;
+
+            return new Vector2(x*32 - y*32 + widthFactor - cOffX, y*16 + x*16 + heightFactor - cOffY);
         }
 
         private void UpdateMapItemLabel(Optional<IItem> item)

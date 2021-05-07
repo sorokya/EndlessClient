@@ -22,6 +22,7 @@ namespace EndlessClient.Rendering.Factories
         private readonly ICurrentMapProvider _currentMapProvider;
         private readonly IMapInteractionController _mapInteractionController;
         private readonly IUserInputProvider _userInputProvider;
+        private readonly IClientWindowSizeProvider _clientWindowSizeProvider;
 
         public MouseCursorRendererFactory(INativeGraphicsManager nativeGraphicsManager,
                                           ICharacterProvider characterProvider,
@@ -31,7 +32,8 @@ namespace EndlessClient.Rendering.Factories
                                           IEIFFileProvider eifFileProvider,
                                           ICurrentMapProvider currentMapProvider,
                                           IMapInteractionController mapInteractionController,
-                                          IUserInputProvider userInputProvider)
+                                          IUserInputProvider userInputProvider,
+                                          IClientWindowSizeProvider clientWindowSizeProvider)
         {
             _nativeGraphicsManager = nativeGraphicsManager;
             _characterProvider = characterProvider;
@@ -42,6 +44,7 @@ namespace EndlessClient.Rendering.Factories
             _currentMapProvider = currentMapProvider;
             _mapInteractionController = mapInteractionController;
             _userInputProvider = userInputProvider;
+            _clientWindowSizeProvider = clientWindowSizeProvider;
         }
 
         public IMouseCursorRenderer Create()
@@ -54,7 +57,8 @@ namespace EndlessClient.Rendering.Factories
                                            _eifFileProvider,
                                            _currentMapProvider,
                                            _mapInteractionController,
-                                           _userInputProvider);
+                                           _userInputProvider,
+                                           _clientWindowSizeProvider);
         }
     }
 

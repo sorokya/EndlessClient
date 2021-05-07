@@ -21,6 +21,8 @@ namespace EndlessClient.Rendering.Character
 {
     public class CharacterRenderer : DrawableGameComponent, ICharacterRenderer
     {
+        private readonly object _rt_locker_ = new object();
+
         private readonly IRenderTargetFactory _renderTargetFactory;
         private readonly IHealthBarRendererFactory _healthBarRendererFactory;
         private readonly ICharacterProvider _characterProvider;
@@ -30,6 +32,7 @@ namespace EndlessClient.Rendering.Character
         private readonly ICharacterSpriteCalculator _characterSpriteCalculator;
         private readonly IGameStateProvider _gameStateProvider;
         private readonly ICurrentMapProvider _currentMapProvider;
+        private readonly IClientWindowSizeRepository _clientWindowSizeRepository;
         private readonly IEffectRenderer _effectRenderer;
 
         private ICharacter _character;
@@ -83,7 +86,8 @@ namespace EndlessClient.Rendering.Character
                                  ICharacterSpriteCalculator characterSpriteCalculator,
                                  ICharacter character,
                                  IGameStateProvider gameStateProvider,
-                                 ICurrentMapProvider currentMapProvider)
+                                 ICurrentMapProvider currentMapProvider,
+                                 IClientWindowSizeRepository clientWindowSizeRepository)
             : base(game)
         {
             _renderTargetFactory = renderTargetFactory;
@@ -96,6 +100,7 @@ namespace EndlessClient.Rendering.Character
             _character = character;
             _gameStateProvider = gameStateProvider;
             _currentMapProvider = currentMapProvider;
+            _clientWindowSizeRepository = clientWindowSizeRepository;
             _effectRenderer = new EffectRenderer(nativeGraphicsmanager, this);
         }
 
@@ -103,6 +108,8 @@ namespace EndlessClient.Rendering.Character
 
         public override void Initialize()
         {
+            _clientWindowSizeRepository.GameWindowSizeChanged += ResizeGameWindow;
+
             _charRenderTarget = _renderTargetFactory.CreateRenderTarget();
             _sb = new SpriteBatch(Game.GraphicsDevice);
 
@@ -203,18 +210,26 @@ namespace EndlessClient.Rendering.Character
 
         public void SetToCenterScreenPosition()
         {
-            const int x = 314; // 618 / 2.0
-
             var skinRect = _characterTextures.Skin.SourceRectangle;
-            var y = (298 - skinRect.Height)/2 - skinRect.Height/4;
-            SetAbsoluteScreenPosition(x, y);
+
+            var xCoord = (_clientWindowSizeRepository.Width - 22) / 2;
+            var yCoord = (_clientWindowSizeRepository.Height * 3 / 10) - (skinRect.Height / 2) - (skinRect.Height / 4);
+
+            SetAbsoluteScreenPosition(xCoord, yCoord);
         }
 
         public void DrawToSpriteBatch(SpriteBatch spriteBatch)
         {
             _effectRenderer.DrawBehindTarget(spriteBatch);
+
             if (Visible)
-                spriteBatch.Draw(_charRenderTarget, new Vector2(0, GetSteppingStoneOffset(Character.RenderProperties)), GetAlphaColor());
+            {
+                lock (_rt_locker_)
+                {
+                    spriteBatch.Draw(_charRenderTarget, new Vector2(0, GetSteppingStoneOffset(Character.RenderProperties)), GetAlphaColor());
+                }
+            }
+
             _effectRenderer.DrawInFrontOfTarget(spriteBatch);
 
             _healthBarRenderer.DrawToSpriteBatch(spriteBatch);
@@ -251,29 +266,32 @@ namespace EndlessClient.Rendering.Character
 
         private void DrawToRenderTarget()
         {
-            GraphicsDevice.SetRenderTarget(_charRenderTarget);
-            GraphicsDevice.Clear(ClearOptions.Target, Color.Transparent, 0, 0);
-            _sb.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
-
-            var characterPropertyRenderers = _characterPropertyRendererBuilder
-                .BuildList(_characterTextures, _character.RenderProperties)
-                .Where(x => x.CanRender);
-            foreach (var renderer in characterPropertyRenderers)
-                renderer.Render(_sb, DrawArea);
-
-            if (_gameStateProvider.CurrentState == GameStates.None)
+            lock (_rt_locker_)
             {
-                _sb.Draw(_outline, DrawArea.WithSize(DrawArea.Width, 1), Color.Black);
-                _sb.Draw(_outline, DrawArea.WithPosition(new Vector2(DrawArea.X + DrawArea.Width, DrawArea.Y)).WithSize(1, DrawArea.Height), Color.Black);
-                _sb.Draw(_outline, DrawArea.WithPosition(new Vector2(DrawArea.X, DrawArea.Y + DrawArea.Height)).WithSize(DrawArea.Width, 1), Color.Black);
-                _sb.Draw(_outline, DrawArea.WithSize(1, DrawArea.Height), Color.Black);
+                GraphicsDevice.SetRenderTarget(_charRenderTarget);
+                GraphicsDevice.Clear(ClearOptions.Target, Color.Transparent, 0, 0);
+                _sb.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
 
-                _sb.Draw(_outline, DrawArea, Color.FromNonPremultiplied(255, 0, 0, 64));
-                _sb.Draw(_outline, MapProjectedDrawArea, Color.FromNonPremultiplied(0, 255, 0, 64));
+                var characterPropertyRenderers = _characterPropertyRendererBuilder
+                    .BuildList(_characterTextures, _character.RenderProperties)
+                    .Where(x => x.CanRender);
+                foreach (var renderer in characterPropertyRenderers)
+                    renderer.Render(_sb, DrawArea);
+
+                if (_gameStateProvider.CurrentState == GameStates.None)
+                {
+                    _sb.Draw(_outline, DrawArea.WithSize(DrawArea.Width, 1), Color.Black);
+                    _sb.Draw(_outline, DrawArea.WithPosition(new Vector2(DrawArea.X + DrawArea.Width, DrawArea.Y)).WithSize(1, DrawArea.Height), Color.Black);
+                    _sb.Draw(_outline, DrawArea.WithPosition(new Vector2(DrawArea.X, DrawArea.Y + DrawArea.Height)).WithSize(DrawArea.Width, 1), Color.Black);
+                    _sb.Draw(_outline, DrawArea.WithSize(1, DrawArea.Height), Color.Black);
+
+                    _sb.Draw(_outline, DrawArea, Color.FromNonPremultiplied(255, 0, 0, 64));
+                    _sb.Draw(_outline, MapProjectedDrawArea, Color.FromNonPremultiplied(0, 255, 0, 64));
+                }
+
+                _sb.End();
+                GraphicsDevice.SetRenderTarget(null);
             }
-
-            _sb.End();
-            GraphicsDevice.SetRenderTarget(null);
         }
 
         private Color GetAlphaColor()
@@ -290,9 +308,11 @@ namespace EndlessClient.Rendering.Character
 
         private void SetGridCoordinatePosition()
         {
-            //todo: the constants here should be dynamically configurable to support window resizing
-            var screenX = _renderOffsetCalculator.CalculateOffsetX(_character.RenderProperties) + 312 - GetMainCharacterOffsetX();
-            var screenY = _renderOffsetCalculator.CalculateOffsetY(_character.RenderProperties) + 106 - GetMainCharacterOffsetY();
+            var centerX = _clientWindowSizeRepository.Width / 2;
+            var centerY = _clientWindowSizeRepository.Height * 3 / 10;
+
+            var screenX = _renderOffsetCalculator.CalculateOffsetX(_character.RenderProperties) + centerX - GetMainCharacterOffsetX();
+            var screenY = _renderOffsetCalculator.CalculateOffsetY(_character.RenderProperties) + centerY - GetMainCharacterOffsetY();
 
             SetScreenCoordinates(screenX, screenY);
         }
@@ -456,6 +476,19 @@ namespace EndlessClient.Rendering.Character
                 _healthBarRenderer.SetDamage(damage == 0 ? Optional<int>.Empty : new Optional<int>(damage), percentHealth);
         }
 
+        private void ResizeGameWindow(object sender, EventArgs e)
+        {
+            lock (_rt_locker_)
+            {
+                _charRenderTarget.Dispose();
+                _charRenderTarget = _renderTargetFactory.CreateRenderTarget(_clientWindowSizeRepository.Width, _clientWindowSizeRepository.Height);
+            }
+
+            SetToCenterScreenPosition();
+
+            _textureUpdateRequired = true;
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -464,7 +497,11 @@ namespace EndlessClient.Rendering.Character
                 _nameLabel.Dispose();
 
                 _sb.Dispose();
-                _charRenderTarget.Dispose();
+
+                lock (_rt_locker_)
+                {
+                    _charRenderTarget.Dispose();
+                }
             }
 
             base.Dispose(disposing);
