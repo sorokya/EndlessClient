@@ -52,5 +52,7 @@ namespace EOLib.Net
         string ReadBreakString();
 
         IEnumerable<byte> ReadBytes(int length);
+
+        bool EOF();
     }
 }

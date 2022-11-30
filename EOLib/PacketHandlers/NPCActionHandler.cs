@@ -56,51 +56,66 @@ namespace EOLib.PacketHandlers
 
         public override bool HandlePacket(IPacket packet)
         {
-            var num255s = 0;
-            while (packet.PeekByte() == byte.MaxValue)
+            while (!packet.EOF() && packet.PeekByte() != 255)
             {
-                num255s++;
-                packet.ReadByte();
+                HandleNPCWalk(packet);
             }
 
+            if (packet.EOF())
+                return true;
+
+            packet.ReadByte(); //255
+
+            while (!packet.EOF() && packet.PeekByte() != 255)
+            {
+                var updatedNpc = HandleNPCAttack(packet);
+                if (updatedNpc != null)
+                {
+                    _currentMapStateRepository.NPCs.Remove(updatedNpc);
+                    _currentMapStateRepository.NPCs.Add(updatedNpc);
+                }
+            }
+
+            if (packet.EOF())
+                return true;
+
+            packet.ReadByte(); //255
+
+            while (!packet.EOF() && packet.PeekByte() != 255)
+            {
+                HandleNPCTalk(packet);
+            }
+
+            return true;
+        }
+
+        private NPC GetNPCFromPacket(IPacket packet)
+        {
             var index = packet.ReadChar();
             NPC npc;
             try
             {
                 npc = _currentMapStateRepository.NPCs.Single(n => n.Index == index);
             }
-            catch (InvalidOperationException) 
+            catch (InvalidOperationException)
             {
                 _currentMapStateRepository.UnknownNPCIndexes.Add(index);
-                return true;
+                npc = null;
             }
 
-            var updatedNpc = Option.None<NPC>();
-            switch (num255s)
-            {
-                case NPC_WALK_ACTION: HandleNPCWalk(packet, npc); break;
-                case NPC_ATTK_ACTION: updatedNpc = Option.Some(HandleNPCAttack(packet, npc)); break;
-                case NPC_TALK_ACTION: HandleNPCTalk(packet, npc); break;
-                default: throw new MalformedPacketException("Unknown NPC action " + num255s + " specified in packet from server!", packet);
-            }
-
-            updatedNpc.MatchSome(n =>
-            {
-                _currentMapStateRepository.NPCs.Remove(npc);
-                _currentMapStateRepository.NPCs.Add(n);
-            });
-
-            return true;
+            return npc;
         }
 
-        private void HandleNPCWalk(IPacket packet, NPC npc)
+        private void HandleNPCWalk(IPacket packet)
         {
+            var npc = GetNPCFromPacket(packet);
+            if (npc == null)
+                return;
+
             //npc remove from view sets x/y to either 0,0 or 252,252 based on target coords
             var x = packet.ReadChar();
             var y = packet.ReadChar();
             var npcDirection = (EODirection) packet.ReadChar();
-            if (packet.ReadBytes(3).Any(b => b != 255))
-                throw new MalformedPacketException("Expected 3 bytes of value 0xFF in NPC_PLAYER packet for Walk action", packet);
 
             var updatedNPC = npc.WithDirection(npcDirection);
             updatedNPC = EnsureCorrectXAndY(updatedNPC, x, y);
@@ -112,15 +127,17 @@ namespace EOLib.PacketHandlers
                 notifier.StartNPCWalkAnimation(npc.Index);
         }
 
-        private NPC HandleNPCAttack(IPacket packet, NPC npc)
+        private NPC HandleNPCAttack(IPacket packet)
         {
+            var npc = GetNPCFromPacket(packet);
+            if (npc == null)
+                return npc;
+
             var isDead = packet.ReadChar() == 2; //2 if target player is dead, 1 if alive
             var npcDirection = (EODirection)packet.ReadChar();
             var characterID = packet.ReadShort();
             var damageTaken = packet.ReadThree();
             var playerPercentHealth = packet.ReadThree();
-            if (packet.ReadBytes(2).Any(b => b != 255))
-                throw new MalformedPacketException("Expected 2 bytes of value 0xFF in NPC_PLAYER packet for Attack action", packet);
 
             if (characterID == _characterRepository.MainCharacter.ID)
             {
@@ -154,8 +171,12 @@ namespace EOLib.PacketHandlers
             return npc.WithDirection(npcDirection);
         }
 
-        private void HandleNPCTalk(IPacket packet, NPC npc)
+        private void HandleNPCTalk(IPacket packet)
         {
+            var npc = GetNPCFromPacket(packet);
+            if (npc == null)
+                return;
+
             var messageLength = packet.ReadChar();
             var message = packet.ReadString(messageLength);
 

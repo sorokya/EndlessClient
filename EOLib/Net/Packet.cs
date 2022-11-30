@@ -193,5 +193,10 @@ namespace EOLib.Net
             ReadPosition += length;
             return ret;
         }
+
+        public bool EOF()
+        {
+            return ReadPosition >= Length;
+        }
     }
 }
