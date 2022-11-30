@@ -87,7 +87,14 @@ namespace EndlessClient.Rendering.NPC
 
         private void UpdateCachedNPC(EOLib.Domain.NPC.NPC npc)
         {
-            _npcRendererRepository.NPCRenderers[npc.Index].NPC = npc;
+            if (!_npcRendererRepository.NPCRenderers.ContainsKey(npc.Index))
+            {
+                CreateAndCacheRendererForNPC(npc);
+            }
+            else
+            {
+                _npcRendererRepository.NPCRenderers[npc.Index].NPC = npc;
+            }
             _npcStateCache.UpdateNPCState(npc.Index, npc);
         }
 
