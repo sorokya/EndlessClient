@@ -1,4 +1,5 @@
 ﻿using AutomaticTypeMapper;
+using EndlessClient.Audio;
 using EndlessClient.Dialogs;
 using EndlessClient.Dialogs.Actions;
 using EndlessClient.Dialogs.Factories;
@@ -47,6 +48,8 @@ namespace EndlessClient.Controllers
         private readonly ICurrentMapStateProvider _currentMapStateProvider;
         private readonly IFirstTimePlayerActions _firstTimePlayerActions;
         private readonly IMapChangedActions _mapChangedActions;
+        private readonly ISfxPlayer _sfxPlayer;
+
 
         public LoginController(ILoginActions loginActions,
                                IMapFileLoadActions mapFileLoadActions,
@@ -65,7 +68,8 @@ namespace EndlessClient.Controllers
                                INewsProvider newsProvider,
                                IUserInputTimeRepository userInputTimeRepository,
                                IClientWindowSizeRepository clientWindowSizeRepository,
-                               IConfigurationProvider configurationProvider)
+                               IConfigurationProvider configurationProvider,
+                               ISfxPlayer sfxPlayer)
         {
             _loginActions = loginActions;
             _mapFileLoadActions = mapFileLoadActions;
@@ -85,12 +89,15 @@ namespace EndlessClient.Controllers
             _userInputTimeRepository = userInputTimeRepository;
             _clientWindowSizeRepository = clientWindowSizeRepository;
             _configurationProvider = configurationProvider;
+            _sfxPlayer = sfxPlayer;
         }
 
         public async Task LoginToAccount(ILoginParameters loginParameters)
         {
             if (!_loginActions.LoginParametersAreValid(loginParameters))
                 return;
+
+            _sfxPlayer.PlaySfx(SoundEffectID.ButtonClick);
 
             var loginToServerOperation = _networkOperationFactory.CreateSafeBlockingOperation(
                 () => _loginActions.LoginToServer(loginParameters),
@@ -111,8 +118,13 @@ namespace EndlessClient.Controllers
             }
         }
 
-        public async Task LoginToCharacter(Character character)
+        public async Task LoginToCharacter(Character character, bool playSfx)
         {
+            if (playSfx)
+            {
+                _sfxPlayer.PlaySfx(SoundEffectID.ButtonClick);
+            }
+
             var requestCharacterLoginOperation = _networkOperationFactory.CreateSafeBlockingOperation(
                 () => _loginActions.RequestCharacterLogin(character),
                 SetInitialStateAndShowError, SetInitialStateAndShowError);
@@ -301,6 +313,6 @@ namespace EndlessClient.Controllers
     {
         Task LoginToAccount(ILoginParameters loginParameters);
 
-        Task LoginToCharacter(Character character);
+        Task LoginToCharacter(Character character, bool playSfx);
     }
 }

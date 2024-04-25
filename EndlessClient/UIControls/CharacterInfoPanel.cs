@@ -49,7 +49,7 @@ namespace EndlessClient.UIControls
                 new Vector2(161, 57),
                 dialogButtonService.GetSmallDialogButtonOutSource(SmallButton.Login),
                 dialogButtonService.GetSmallDialogButtonOverSource(SmallButton.Login));
-            _loginButton.OnClick += (o, e) => AsyncButtonClick(() => _loginController.LoginToCharacter(_character));
+            _loginButton.OnClick += (o, e) => AsyncButtonClick(() => _loginController.LoginToCharacter(_character, false));
             _loginButton.SetParentControl(this);
 
             _deleteButton = new XNAButton(dialogButtonService.SmallButtonSheet,
@@ -164,7 +164,7 @@ namespace EndlessClient.UIControls
             var currentKeyState = _userInputProvider.CurrentKeyState;
             if (currentKeyState.IsKeyPressedOnce(previousKeyState, Keys.D1 + _characterIndex))
             {
-                AsyncButtonClick(() => _loginController.LoginToCharacter(_character));
+                AsyncButtonClick(() => _loginController.LoginToCharacter(_character, true));
             }
         }
 
